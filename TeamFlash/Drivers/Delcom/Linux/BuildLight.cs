@@ -1,4 +1,4 @@
-﻿namespace TeamFlash.Linux
+﻿namespace TeamFlash.Drivers.Delcom.Linux
 {
     class BuildLight : IBuildLight
     {

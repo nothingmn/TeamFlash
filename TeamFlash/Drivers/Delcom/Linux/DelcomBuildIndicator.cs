@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace TeamFlash.Linux
+namespace TeamFlash.Drivers.Delcom.Linux
 {
     public class DelcomBuildIndicator
     {

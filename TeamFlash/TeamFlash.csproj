@@ -53,14 +53,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildLight.cs" />
+    <Compile Include="Drivers\Delcom\BuildLight.cs" />
     <Compile Include="BuildStatus.cs" />
-    <Compile Include="DelcomBuildIndicator.cs" />
+    <Compile Include="Drivers\Delcom\DelcomBuildIndicator.cs" />
+    <Compile Include="Drivers\HttpPostDriver.cs" />
     <Compile Include="IBuildLight.cs" />
-    <Compile Include="Linux\BuildLight.cs" />
-    <Compile Include="Linux\DelcomBuildIndicator.cs" />
+    <Compile Include="Drivers\Delcom\Linux\BuildLight.cs" />
+    <Compile Include="Drivers\Delcom\Linux\DelcomBuildIndicator.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Monitor.cs" />
+    <Compile Include="Drivers\Delcom\Monitor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query.cs" />

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
+using TeamFlash.Drivers.Delcom;
 
 namespace TeamFlash
 {
@@ -23,8 +24,6 @@ namespace TeamFlash
             teamFlashConfig.BuildLightDriver= ReadConfig("Build Light Driver, * for Default", teamFlashConfig.BuildLightDriver);
 
             SaveConfig(teamFlashConfig);
-
-            Console.Clear();
 
             var buildTypeIds = ConvertBuildTypeIdsToArray(teamFlashConfig.BuildTypeIds);
             var buildTypeIdsExcluded = ConvertBuildTypeIdsToArray(teamFlashConfig.BuildTypeIdsExcluded);
@@ -77,16 +76,22 @@ namespace TeamFlash
 
         private static IBuildLight GetBuildLightDriver(TeamFlashConfig config)
         {
+            IBuildLight driver = null;
             if (string.IsNullOrEmpty(config.BuildLightDriver) || config.BuildLightDriver=="*")
             {
-                return DefaultBuildLight;
+                driver = DefaultBuildLight;
             }
             else
             {
                 var type = Type.GetType(config.BuildLightDriver);
                 if (type == null) return DefaultBuildLight;
-                return type.Assembly.CreateInstance(config.BuildLightDriver, true) as IBuildLight;
+                driver = type.Assembly.CreateInstance(config.BuildLightDriver, true) as IBuildLight;
             }
+            if (driver == null)
+            {
+                driver = DefaultBuildLight;
+            }
+            return driver;
         }
         
         private static IBuildLight DefaultBuildLight
@@ -115,7 +120,7 @@ namespace TeamFlash
         static TeamFlashConfig LoadConfig()
         {
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var configFilePath = Path.Combine(appDataPath, @"TeamFlash\config.json");
+            var configFilePath = Path.Combine(appDataPath, @"TeamFlash\config.xml");
             try
             {
                 if (!File.Exists(configFilePath)) return new TeamFlashConfig();
@@ -142,7 +147,7 @@ namespace TeamFlash
             if (!Directory.Exists(teamFlashPath))
                 Directory.CreateDirectory(teamFlashPath);
 
-            var configFilePath = Path.Combine(teamFlashPath, @"config.json");
+            var configFilePath = Path.Combine(teamFlashPath, @"config.xml");
 
             var serializer = new XmlSerializer(typeof(TeamFlashConfig));
             using (var stream = File.Create(configFilePath))

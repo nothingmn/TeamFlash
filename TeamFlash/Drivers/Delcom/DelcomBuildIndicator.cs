@@ -1,7 +1,7 @@
-﻿using System.Text;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using System.Text;
 
-namespace TeamFlash
+namespace TeamFlash.Drivers.Delcom
 {
     class DelcomBuildIndicator
     {
