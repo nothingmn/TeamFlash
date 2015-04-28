@@ -19,9 +19,8 @@ namespace TeamFlash
             teamFlashConfig.Username = ReadConfig("Username", teamFlashConfig.Username);
             var password = ReadConfig("Password", "");
             teamFlashConfig.BuildTypeIds = ReadConfig("Comma separated build type ids to INCLUDE (eg, \"bt64,bt12\"), or * for ALL", teamFlashConfig.BuildTypeIds);
-            teamFlashConfig.BuildTypeIdsExcluded =
-                ReadConfig("Comma separated build type ids to EXCLUDE (eg, \"bt64,bt12\"), or * for NONE",
-                    teamFlashConfig.BuildTypeIdsExcluded);
+            teamFlashConfig.BuildTypeIdsExcluded = ReadConfig("Comma separated build type ids to EXCLUDE (eg, \"bt64,bt12\"), or * for NONE", teamFlashConfig.BuildTypeIdsExcluded);
+            teamFlashConfig.BuildLightDriver= ReadConfig("Build Light Driver, * for Default", teamFlashConfig.BuildLightDriver);
 
             SaveConfig(teamFlashConfig);
 
@@ -30,11 +29,8 @@ namespace TeamFlash
             var buildTypeIds = ConvertBuildTypeIdsToArray(teamFlashConfig.BuildTypeIds);
             var buildTypeIdsExcluded = ConvertBuildTypeIdsToArray(teamFlashConfig.BuildTypeIdsExcluded);
 
-#if __MonoCS__
-            var buildLight = new Linux.BuildLight();
-#else
-            var buildLight = new BuildLight();
-#endif
+            var buildLight = GetBuildLightDriver(teamFlashConfig);
+
 
             buildLight.Off();
 
@@ -77,6 +73,32 @@ namespace TeamFlash
             return buildTypeIds == "*"
                 ? new string[0]
                 : buildTypeIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
+        }
+
+        private static IBuildLight GetBuildLightDriver(TeamFlashConfig config)
+        {
+            if (string.IsNullOrEmpty(config.BuildLightDriver) || config.BuildLightDriver=="*")
+            {
+                return DefaultBuildLight;
+            }
+            else
+            {
+                var type = Type.GetType(config.BuildLightDriver);
+                if (type == null) return DefaultBuildLight;
+                return type.Assembly.CreateInstance(config.BuildLightDriver, true) as IBuildLight;
+            }
+        }
+        
+        private static IBuildLight DefaultBuildLight
+        {
+            get
+            {
+#if __MonoCS__
+                return new Linux.BuildLight();
+#else
+                return new BuildLight();
+#endif
+            }
         }
 
         static bool PromptForVerboseMode()

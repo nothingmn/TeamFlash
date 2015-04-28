@@ -6,5 +6,8 @@
         public string Username { get; set; }
         public string BuildTypeIds { get; set; }
         public string BuildTypeIdsExcluded { get; set; }
+
+        public string BuildLightDriver { get; set; }
+
     }
 }
